@@ -56,7 +56,20 @@ const Cache = {
 
   end() {
     return new Promise((resolve, reject) => {
-      let cache;
+      let method = this.requestOpts.method,
+          data = this.requestOpts.data,
+          cache, cacheUrl;
+
+      //缓存参数只支持一层object对象
+      if (method === 'get' || method === 'jsonp') {
+        cacheUrl = Object.keys(data).sort((value1, value2) => value1 - value2).reduce((mem, key) => {
+          return mem + data[key]
+        }, '')
+      }
+
+      if (method === 'post') {
+        Object.keys(data).sort((value1, value2) => value1 - value2).toString() === this.postDigestMappings[url].toString();
+      }
 
       cache = storage.getItem(url) ? 
         resolve(cache) : 
@@ -72,7 +85,11 @@ const Cache = {
     this.requestOpts.url = url;
     this.requestOpts.method = method;
     return this; 
-  }
+  },
+
+  postDigest(cacheName, digest) {
+
+  },
 
   requestOpts: {
     headers: {},
@@ -81,7 +98,9 @@ const Cache = {
     method: 'get'
   },
 
-  mappings: {}
+  mappings: {},
+
+  postDigestMappings: {}
 
 }
 
@@ -91,3 +110,4 @@ export default methods.reduce((mem, method) => {
   mem[method] = mem.fetch(url, method);
   return mem;
 }, Cache);
+

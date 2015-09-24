@@ -13,22 +13,18 @@ function crossOrigin(url1, url2) {
 export default function(options = {}) {
   if (options.method !== 'jsonp') {
 
-    let jsonType = {'Content-Type': 'application/json;charset=utf-8'};
     let defaultHeaders = {
-      put: jsonType,
-      post: jsonType,
-      patch: jsonType,
-      delete: jsonType,
-      common: {'Accept': 'application/json, text/plain, */*'},
-      custom: {'X-Requested-With': 'XMLHttpRequest'}    
+      'Accept': 'application/json, text/plain, */*',
+      'X-Requested-With': 'XMLHttpRequest',
+      'Content-Type': 'application/json;charset=utf-8';    
     };
     let defaultOpts = {
-      method: 'get', 
+      method: 'GET', 
       url: '', 
       data: null, 
       headers: {}, 
       crossOrigin: null,
-      emulateHTTP: false,
+      emulateHTTP: true,
       emulateJSON: false
     }
 
@@ -43,14 +39,22 @@ export default function(options = {}) {
     }, options)
 
     options.crossOrigin = crossOrigin(location.href, url);
+
+
     options.method = options.method.toUpperCase();
 
     if (/^(GET)$/i.test(options.method)) {
+      // {
+      //   'Cache-Control': 'no-cache',
+      //   'If-Modified-Since': '0'
+      // }
+      options.data._timestamp = +new Date;
       options.url = util.serialiseUrl(options.url, options.data);
       options.data = null;
+      delete options.headers['X-Requested-With'];
     }
 
-    if (!options.crossOrigin && /^(PUT|PATCH|DELETE)$/i.test(options.method)) {
+    if (options.emulateHTTP && !options.crossOrigin && /^(PUT|PATCH|DELETE)$/i.test(options.method)) {
         options.headers['X-HTTP-Method-Override'] = options.method;
         options.method = 'POST';
     }
@@ -65,21 +69,23 @@ export default function(options = {}) {
 
   }
 
+  return options.method !== 'jsonp' ? xhr(options) : jsonp(options.url, options.data);
 
-  return new Promise((resolve, reject) => {
-    options.method !== 'jsonp' ?
 
-      xhr(options).then((request) => {
-        resolve(util.parse(request.responseText), request.status, request)
-      }).catch((request) =? {
-        reject(request, request.status)
-      }) :
+  // return new Promise((resolve, reject) => {
+  //   options.method !== 'jsonp' ?
 
-      jsonp(options.url, options.data).then((data) => {
-        resolve(util.parse(data))
-      }).catch(() {
-        reject();
-      })
-  })
+  //     xhr(options).then((request) => {
+  //       resolve(util.parse(request.responseText), request.status, request)
+  //     }).catch((request) =? {
+  //       reject(request, request.status)
+  //     }) :
+
+  //     jsonp(options.url, options.data).then((data) => {
+  //       resolve(util.parse(data))
+  //     }).catch(() {
+  //       reject();
+  //     })
+  // })
 
 }

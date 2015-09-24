@@ -90,7 +90,6 @@ describe('xhr test', () => {
 
   it('should invoke fail fn', () => {
     return xhr({ url: 'http://wwww.baidu.com' }).catch((response) => {
-      response.status.should.not.equal(200);
       response.status.should.equal(0);
     })
   })
@@ -98,15 +97,79 @@ describe('xhr test', () => {
 })
 
 describe('http test', () => {
-  it('should success via get mehtod')
+  let options, wrongUrl;
+  beforeEach(() => {
+    options = {
+        url: 'http://apis.baidu.com/apistore/weatherservice/citylist?cityname=%E6%9C%9D%E9%98%B3',
+        data: { test: 'testcode', id: 10 }
+    }
+    wrongUrl = 'http://wwww.baidu.com';    
+  })
 
-  it('should success via post method')
+  it('should success via get mehtod', () => {
+    options.method = 'GET';
+    return http(options).then((response) => {
+      response.status.should.equal(200);
+    })
 
-  it('should success via put method')
+    options.url = wrongUrl;
 
-  it('should success via delete method')
+    return http(options).catch((response) => {
+      response.status.should.equal(0);
+    })
+  })
 
-  it('should success via patch method')
+  it('should success via post method', () => {
+    options.method = 'POST';
+    return http(options).then((response) => {
+      response.status.should.equal(200);
+    })
+
+    options.url = wrongUrl;
+
+    return http(options).catch((response) => {
+      response.status.should.equal(0);
+    })
+  })
+
+  it('should success via put method', () => {
+    options.method = 'PUT';
+    return http(options).then((response) => {
+      response.status.should.equal(200);
+    })
+
+    options.url = wrongUrl;
+
+    return http(options).catch((response) => {
+      response.status.should.equal(0);
+    })    
+  })
+
+  it('should success via delete method', () => {
+    options.method = 'DELETE';
+    return http(options).then((response) => {
+      response.status.should.equal(200);
+    })
+
+    options.url = wrongUrl;
+
+    return http(options).catch((response) => {
+      response.status.should.equal(0);
+    })    
+  })
+
+  it('should success via patch method', () => {
+    options.method = 'PATCH';
+    return http(options).then((response) => {
+      response.status.should.equal(200);
+    })
+
+    options.url = wrongUrl;
+
+    return http(options).catch((response) => {
+      response.status.should.equal(0);
+    })      
+  })
 })
 
 describe('cache test', () => {
