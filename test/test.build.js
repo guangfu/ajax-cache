@@ -70,6 +70,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _srcXhrJs2 = _interopRequireDefault(_srcXhrJs);
 
+	var _srcHttpJs = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"../src/http.js\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+
+	var _srcHttpJs2 = _interopRequireDefault(_srcHttpJs);
+
 	var should = chai.should();
 
 	describe('jsonp test', function () {
@@ -154,11 +158,89 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  it('should invoke fail fn', function () {
 	    return (0, _srcXhrJs2['default'])({ url: 'http://wwww.baidu.com' })['catch'](function (response) {
-	      response.status.should.not.equal(200);
 	      response.status.should.equal(0);
 	    });
 	  });
 	});
+
+	describe('http test', function () {
+	  var options = undefined,
+	      wrongUrl = undefined;
+	  beforeEach(function () {
+	    options = {
+	      url: 'http://apis.baidu.com/apistore/weatherservice/citylist?cityname=%E6%9C%9D%E9%98%B3',
+	      data: { test: 'testcode', id: 10 }
+	    };
+	    wrongUrl = 'http://wwww.baidu.com';
+	  });
+
+	  it('should success via get mehtod', function () {
+	    options.method = 'GET';
+	    return (0, _srcHttpJs2['default'])(options).then(function (response) {
+	      response.status.should.equal(200);
+	    });
+
+	    options.url = wrongUrl;
+
+	    return (0, _srcHttpJs2['default'])(options)['catch'](function (response) {
+	      response.status.should.equal(0);
+	    });
+	  });
+
+	  it('should success via post method', function () {
+	    options.method = 'POST';
+	    return (0, _srcHttpJs2['default'])(options).then(function (response) {
+	      response.status.should.equal(200);
+	    });
+
+	    options.url = wrongUrl;
+
+	    return (0, _srcHttpJs2['default'])(options)['catch'](function (response) {
+	      response.status.should.equal(0);
+	    });
+	  });
+
+	  it('should success via put method', function () {
+	    options.method = 'PUT';
+	    return (0, _srcHttpJs2['default'])(options).then(function (response) {
+	      response.status.should.equal(200);
+	    });
+
+	    options.url = wrongUrl;
+
+	    return (0, _srcHttpJs2['default'])(options)['catch'](function (response) {
+	      response.status.should.equal(0);
+	    });
+	  });
+
+	  it('should success via delete method', function () {
+	    options.method = 'DELETE';
+	    return (0, _srcHttpJs2['default'])(options).then(function (response) {
+	      response.status.should.equal(200);
+	    });
+
+	    options.url = wrongUrl;
+
+	    return (0, _srcHttpJs2['default'])(options)['catch'](function (response) {
+	      response.status.should.equal(0);
+	    });
+	  });
+
+	  it('should success via patch method', function () {
+	    options.method = 'PATCH';
+	    return (0, _srcHttpJs2['default'])(options).then(function (response) {
+	      response.status.should.equal(200);
+	    });
+
+	    options.url = wrongUrl;
+
+	    return (0, _srcHttpJs2['default'])(options)['catch'](function (response) {
+	      response.status.should.equal(0);
+	    });
+	  });
+	});
+
+	describe('cache test', function () {});
 
 /***/ },
 /* 1 */

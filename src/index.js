@@ -68,7 +68,7 @@ const Cache = {
       }
 
       if (method === 'post') {
-        Object.keys(data).sort((value1, value2) => value1 - value2).toString() === this.postDigestMappings[url].toString();
+        
       }
 
       cache = storage.getItem(url) ? 

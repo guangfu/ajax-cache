@@ -1,6 +1,7 @@
 import jsonp from '../src/jsonp.js';
 import Storage from '../src/lib/storage.js';
 import xhr from '../src/xhr.js';
+import http from '../src/http.js';
 
 let should = chai.should();
 

@@ -4,8 +4,8 @@ import xhr from './xhr.js';
 import util from './lib/util.js';
 
 function crossOrigin(url1, url2) {
-  let url1 = util.parseUrl(url1);
-  let url2 = util.parseUrl(url2);
+  url1 = util.parseUrl(url1);
+  url2 = util.parseUrl(url2);
 
   return (url1.protocol !== url2.protocol || util.host !== url2.host);
 }
@@ -16,7 +16,7 @@ export default function(options = {}) {
     let defaultHeaders = {
       'Accept': 'application/json, text/plain, */*',
       'X-Requested-With': 'XMLHttpRequest',
-      'Content-Type': 'application/json;charset=utf-8';    
+      'Content-Type': 'application/json;charset=utf-8'
     };
     let defaultOpts = {
       method: 'GET', 
@@ -28,17 +28,20 @@ export default function(options = {}) {
       emulateJSON: false
     }
 
+    options.headers = options.headers || {};
+    options.data = options.data || {};
+
     Object.keys(defaultHeaders).reduce((mem, header) => {
-      mem[headera] = defaultHeaders[header];
+      mem[header] = defaultHeaders[header];
       return mem;
     }, options.headers);
 
-    Object.keys(defaultOpts).reduce({mem, key} => {
-      mem[key] = mem[key| || defaultOpts[key];
+    Object.keys(defaultOpts).reduce((mem, key) => {
+      mem[key] = mem[key] || defaultOpts[key];
       return mem;
     }, options)
 
-    options.crossOrigin = crossOrigin(location.href, url);
+    options.crossOrigin = crossOrigin(location.href, options.url);
 
 
     options.method = options.method.toUpperCase();
@@ -63,7 +66,7 @@ export default function(options = {}) {
         options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
     }
 
-    if (/FormData/i.test(options.data.toString())) {
+    if (/FormData/i.test(typeof options.data === 'string' ? options.data.toString() : '')) {
         delete options.headers['Content-Type'];
     }
 
