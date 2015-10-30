@@ -15,7 +15,7 @@ export default function(options = {}) {
 
     let defaultHeaders = {
       'Accept': 'application/json, text/plain, */*',
-      'X-Requested-With': 'XMLHttpRequest',
+      // 'X-Requested-With': 'XMLHttpRequest',
       'Content-Type': 'application/json;charset=utf-8'
     };
     let defaultOpts = {

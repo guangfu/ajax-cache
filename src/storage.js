@@ -17,8 +17,8 @@ export default class Storage {
     this.vessels = this._fetchVessels();
   }
 
-  _fetchVessels(name) {
-    return this.storage.getItem(name) ? this.storage.getItem(name).split(',') : [];
+  _fetchVessels() {
+    return this.storage.getItem(this.name) ? this.storage.getItem(this.name).split(',') : [];
   }
 
   _getKey(key) {

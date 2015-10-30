@@ -1,0 +1,9 @@
+{
+  "posts": [
+    { "id": "aaa", "title": "json-server", "author": "typicode" },
+    { "id": "bbb", "title": "json-server", "author": "ddd" }
+  ],
+  "comments": [
+    { "id": 1, "body": "some comment", "postId": 1 }
+  ]
+}
