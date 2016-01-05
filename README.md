@@ -50,9 +50,7 @@ request.delete('api').data(data).end().then((result) => {
 ## 方法
 
 * config  对xhr请求全局配置
-
 * setStorageMode 设置缓存使用方式，有三种缓存方式：sessionStorage、localStorage以及内存memory，默认缓存方式是sessionStorage
-
 * header 头信息设置
 * data 传送信息设置
 * beforeSend 发送前调用
