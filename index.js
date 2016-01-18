@@ -23,35 +23,44 @@ function createArgHandler(handler) {
 
 //重置选项
 function reset() {
-  requestOpts = oriRequestOpts;
-  mappings = oriMappings;
+  requestOpts = {
+    headers: {},
+    data: {},
+    url: '',
+    method: 'get',
+    mappingUrl: ''
+  };
+  // mappings = oriMappings;
   isClearCache = false;
   beforeSendCb = null;
-  timeoutDuration = null;
+  // timeoutDuration = null;
 }
 
 let requestOpts = {         //请求头
   headers: {},
   data: {},
   url: '',
-  method: 'get'
+  method: 'get',
+  mappingUrl: ''
 }
 
 let mappings = {},             //请求地址的映射
     isClearCache = false,      //是否清除缓存
     beforeSendCb = null,      //请求前的回调
-    timeoutDuration = null,   //超时时间
+    timeoutDuration = 10000,   //超时时间
     needCache = false,         //post需要增加缓存
     withCredentials;          //cookie跨域
 
-let oriRequestOpts = util.clone(requestOpts),
-    oriMappings = util.clone(mappings);
+// let oriRequestOpts = util.clone(requestOpts),
+//     oriMappings = util.clone(mappings);
+//
+//     console.log(oriRequestOpts)
 
 const Cache = {
   config(options) {
     if (typeof options !== 'object') return;
     withCredentials = options.withCredentials;
-
+    timeoutDuration = options.timeoutDuration || 10000;
     return this;
   },
 
@@ -60,10 +69,6 @@ const Cache = {
 
     return this;
   },
-
-  connect: createArgHandler((key, value) => {
-    mappings[key] = value
-  }),
 
   header: createArgHandler((key, value) => {
     requestOpts.headers[key] = value;
@@ -79,11 +84,11 @@ const Cache = {
     return this;
   },
 
-  timeout(duration) {
-    timeoutDuration = duration || 10000;
-
-    return this;
-  },
+  // timeout(duration) {
+  //   timeoutDuration = duration || 10000;
+  //
+  //   return this;
+  // },
 
   http(options = {}) {
     Object.keys(options).reduce((mem, key) => {
@@ -112,7 +117,9 @@ const Cache = {
       let method = requestOpts.method,
           data = requestOpts.data,
           url = requestOpts.url,
-          cache, xhr;
+          cache;
+
+      // requestOpts.mappingUrl = null;
 
       if (method === 'get' || method === 'jsonp') {
         requestOpts.mappingUrl = url;
@@ -139,26 +146,31 @@ const Cache = {
         resolve(util.parse(cache), 200)
       } else {
         let promise = http(util.clone(requestOpts));
-        xhr = promise.xhr;
-        method = promise.method.toLowerCase();
-        let mappingUrl = promise.mappingUrl;
+        (function(promise) {
+          let xhr = promise.xhr;
+          let method = promise.method.toLowerCase();
+          let mappingUrl = promise.mappingUrl;
 
-        promise.then((xhr) => {
-          if (mappingUrl) {
-            storage.setItem(mappingUrl, xhr.responseText);
-            resolve.call(null, util.parse(xhr.responseText), xhr.status)
-          } else {
-            resolve.call(null, util.parse(xhr.responseText), xhr.status)
-          }
-        }).catch((xhr)=> {
-          reject.call(null, new Error(xhr.statusText));
-        })
+          promise.then((xhr) => {
+            if (mappingUrl) {
+              storage.setItem(mappingUrl, xhr.responseText);
+              resolve.call(null, util.parse(xhr.responseText), xhr.status)
+            } else {
+              resolve.call(null, util.parse(xhr.responseText), xhr.status)
+            }
+          }).catch((xhr)=> {
+            reject.call(null, new Error(xhr.statusText));
+          })
+
+          //超时处理
+          timeoutDuration && setTimeout(() => {
+            xhr.abort();
+            // xhr = null;
+            promise = null;
+          }, timeoutDuration)
+        }(promise))
+
       }
-
-      //超时处理
-      timeoutDuration && setTimeout(() => {
-        xhr.abort();
-      }, timeoutDuration)
 
       //重置选项，防止不同请求的配置篡改
       reset();
