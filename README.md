@@ -64,3 +64,5 @@ request.delete('api').data(data).end().then((result) => {
 * patch patch请求方式
 * delete delete请求方式
 * jsonp jsonp请求请求方式
+
+PS：在项目的使用中，为了使用的便利性，调整了一些接口的使用方式，同时修复了一些已知bug。由于时间紧迫，单元测试案列现已失效，望见谅。
